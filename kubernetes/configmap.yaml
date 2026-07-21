@@ -1,0 +1,18 @@
+# Non-sensitive configuration for the backend pod.
+#
+# Why SPRING_PROFILES_ACTIVE=docker?
+# The application-docker.yml already sets postgres host to "postgres" and redis host to
+# "redis" — and those match the Kubernetes Service names we define in service.yaml.
+# No new profile needed; docker profile reused as-is.
+#
+# Apply: kubectl apply -f kubernetes/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend-config
+  namespace: devops-platform
+  labels:
+    app: backend
+    project: production-devops-platform
+data:
+  SPRING_PROFILES_ACTIVE: "docker"

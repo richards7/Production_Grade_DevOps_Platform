@@ -1,0 +1,25 @@
+apiVersion: v2
+name: production-platform
+description: >
+  Helm chart for the Production-Grade DevOps Deployment Platform.
+  Packages backend (Spring Boot), frontend (React/NGINX), PostgreSQL, and Redis
+  into a single deployable unit. Jenkins overrides image tags on every build.
+
+# Chart type: application (deploys workloads, not a library of helpers)
+type: application
+
+# Chart version — bump this when the chart itself changes (templates, values structure)
+version: 0.1.0
+
+# Application version — reflects the application release, overridden by Jenkins via --set
+appVersion: "latest"
+
+keywords:
+  - devops
+  - cicd
+  - spring-boot
+  - react
+  - kubernetes
+
+maintainers:
+  - name: Aashish Richard J

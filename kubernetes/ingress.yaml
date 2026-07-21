@@ -1,0 +1,78 @@
+# NGINX Ingress — single entry point for external traffic.
+#
+# Prerequisites (run once in WSL):
+#   minikube addons enable ingress
+#   kubectl wait --namespace ingress-nginx \
+#     --for=condition=ready pod \
+#     --selector=app.kubernetes.io/component=controller \
+#     --timeout=120s
+#
+# Add local hostname resolution (run once, survives until /etc/hosts is cleared):
+#   echo "$(minikube ip) devops-platform.local" | sudo tee -a /etc/hosts
+#
+# After apply, test:
+#   curl http://devops-platform.local/students        → backend API
+#   curl http://devops-platform.local/actuator/health → Spring Actuator
+#   open http://devops-platform.local in browser      → React frontend
+#
+# Note on frontend API calls:
+#   The React app's api.ts hardcodes http://localhost:8080.
+#   For browser testing in K8s, run in a separate WSL terminal:
+#     kubectl port-forward svc/backend 8080:8080 -n devops-platform
+#   This is the standard local dev workaround without modifying api.ts.
+#
+# Apply: kubectl apply -f kubernetes/ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: production-platform-ingress
+  namespace: devops-platform
+  labels:
+    project: production-devops-platform
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: devops-platform.local
+      http:
+        paths:
+          # React frontend — root path
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 80
+          # Spring Boot REST API
+          - path: /students
+            pathType: Prefix
+            backend:
+              service:
+                name: backend
+                port:
+                  number: 8080
+          # Spring Actuator (health checks + metrics)
+          - path: /actuator
+            pathType: Prefix
+            backend:
+              service:
+                name: backend
+                port:
+                  number: 8080
+          # Swagger UI (optional but useful for demo)
+          - path: /swagger-ui
+            pathType: Prefix
+            backend:
+              service:
+                name: backend
+                port:
+                  number: 8080
+          - path: /v3/api-docs
+            pathType: Prefix
+            backend:
+              service:
+                name: backend
+                port:
+                  number: 8080

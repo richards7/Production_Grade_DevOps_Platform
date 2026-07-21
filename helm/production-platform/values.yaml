@@ -1,0 +1,108 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# values.yaml — default configuration for the production-platform Helm chart
+#
+# Jenkins overrides image tags on every build:
+#   helm upgrade --install production-platform ./helm/production-platform \
+#     --set backend.image.tag=<BUILD_NUMBER> \
+#     --set frontend.image.tag=<BUILD_NUMBER>
+#
+# Sensitive values (postgres password) are here for local dev convenience.
+# In production, use --set postgres.auth.password=<secret> or external secrets.
+# ─────────────────────────────────────────────────────────────────────────────
+
+namespace:
+  name: devops-platform
+
+# ─── Backend (Spring Boot) ────────────────────────────────────────────────────
+backend:
+  image:
+    repository: richards7/backend
+    # Overridden by Jenkins: --set backend.image.tag=${BUILD_NUMBER}
+    tag: latest
+    pullPolicy: Always
+  replicaCount: 1
+  service:
+    port: 8080
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  # Spring Boot profile — "docker" reuses application-docker.yml
+  # which points to service names "postgres" and "redis"
+  springProfile: docker
+  readinessProbe:
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    failureThreshold: 5
+  livenessProbe:
+    initialDelaySeconds: 60
+    periodSeconds: 15
+    failureThreshold: 3
+
+# ─── Frontend (React / NGINX) ─────────────────────────────────────────────────
+frontend:
+  image:
+    repository: richards7/frontend
+    # Overridden by Jenkins: --set frontend.image.tag=${BUILD_NUMBER}
+    tag: latest
+    pullPolicy: Always
+  replicaCount: 1
+  service:
+    port: 80
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 128Mi
+
+# ─── PostgreSQL ───────────────────────────────────────────────────────────────
+postgres:
+  image:
+    repository: postgres
+    tag: "16"
+    pullPolicy: IfNotPresent
+  service:
+    port: 5432
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 256Mi
+  storage:
+    size: 1Gi
+  auth:
+    database: devopsplatform
+    username: devuser
+    # ⚠️  Change this before any non-local deployment.
+    # Pass via: --set postgres.auth.password=<secret>
+    password: devpass
+
+# ─── Redis ────────────────────────────────────────────────────────────────────
+redis:
+  image:
+    repository: redis
+    tag: "7"
+    pullPolicy: IfNotPresent
+  service:
+    port: 6379
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 128Mi
+
+# ─── Ingress ──────────────────────────────────────────────────────────────────
+ingress:
+  enabled: true
+  className: nginx
+  # Add to /etc/hosts: $(minikube ip) devops-platform.local
+  host: devops-platform.local

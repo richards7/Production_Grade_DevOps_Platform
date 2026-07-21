@@ -1,0 +1,20 @@
+# PersistentVolumeClaim for Postgres.
+# Without this, all database data is lost when the Postgres pod restarts.
+# Minikube's default storage class (standard) provisions a HostPath volume automatically.
+#
+# Apply: kubectl apply -f kubernetes/pvc.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc
+  namespace: devops-platform
+  labels:
+    app: postgres
+    project: production-devops-platform
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  # No storageClassName needed — Minikube's default class is used automatically

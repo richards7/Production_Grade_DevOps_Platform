@@ -1,0 +1,84 @@
+# ClusterIP Services for all four workloads.
+# ClusterIP = only reachable inside the cluster.
+# External traffic comes in via the Ingress (ingress.yaml).
+#
+# Service names (postgres, redis, backend, frontend) match what
+# application-docker.yml and the frontend api.ts expect.
+#
+# Apply: kubectl apply -f kubernetes/service.yaml
+
+---
+# ─── PostgreSQL ────────────────────────────────────────────────────────────────
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  namespace: devops-platform
+  labels:
+    app: postgres
+    project: production-devops-platform
+spec:
+  selector:
+    app: postgres
+  ports:
+    - name: postgres
+      port: 5432
+      targetPort: 5432
+  type: ClusterIP
+
+---
+# ─── Redis ─────────────────────────────────────────────────────────────────────
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  namespace: devops-platform
+  labels:
+    app: redis
+    project: production-devops-platform
+spec:
+  selector:
+    app: redis
+  ports:
+    - name: redis
+      port: 6379
+      targetPort: 6379
+  type: ClusterIP
+
+---
+# ─── Backend ───────────────────────────────────────────────────────────────────
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  namespace: devops-platform
+  labels:
+    app: backend
+    project: production-devops-platform
+spec:
+  selector:
+    app: backend
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP
+
+---
+# ─── Frontend ──────────────────────────────────────────────────────────────────
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  namespace: devops-platform
+  labels:
+    app: frontend
+    project: production-devops-platform
+spec:
+  selector:
+    app: frontend
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+  type: ClusterIP

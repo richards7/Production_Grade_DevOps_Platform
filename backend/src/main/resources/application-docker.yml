@@ -1,0 +1,7 @@
+# Overrides used when running INSIDE Docker Compose — hostnames match the service names in docker-compose.yml
+spring:
+  datasource:
+    url: jdbc:postgresql://postgres:5432/devopsplatform
+  data:
+    redis:
+      host: redis

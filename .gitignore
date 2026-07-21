@@ -1,0 +1,35 @@
+# ─── Java / Maven build artifacts ────────────────────────────────────────────
+target/
+*.jar
+*.war
+*.class
+
+# ─── Node / frontend build artifacts ─────────────────────────────────────────
+node_modules/
+dist/
+.vite/
+
+# ─── Secrets — NEVER commit these ────────────────────────────────────────────
+kubernetes/secrets.yaml
+*.env
+.env.*
+!.env.example
+
+# ─── SonarQube local cache ────────────────────────────────────────────────────
+.sonar/
+.scannerwork/
+
+# ─── IDE and OS files ────────────────────────────────────────────────────────
+.idea/
+*.iml
+.vscode/
+.DS_Store
+Thumbs.db
+
+# ─── Logs ────────────────────────────────────────────────────────────────────
+*.log
+logs/
+
+# ─── Helm chart lock files (regenerate with helm dependency update) ───────────
+helm/*/charts/
+helm/*/Chart.lock

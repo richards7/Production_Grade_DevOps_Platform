@@ -1,0 +1,88 @@
+name: Production-Grade DevOps Deployment Platform
+status: in-progress
+current_phase: Phase 3 (Stage A Execution)
+
+milestones:
+  - id: m1
+    title: "Stage A — Automated Local Deployment"
+    status: in-progress
+    description: "Kubernetes manifests, Helm chart, Jenkinsfile, GitHub webhook, full push-to-deploy working locally."
+    tasks:
+      - id: m1-t1
+        title: "Kubernetes Raw Manifests"
+        status: completed
+        files:
+          - kubernetes/namespace.yaml
+          - kubernetes/configmap.yaml
+          - kubernetes/secrets.yaml
+          - kubernetes/pvc.yaml
+          - kubernetes/deployment.yaml
+          - kubernetes/service.yaml
+          - kubernetes/ingress.yaml
+      - id: m1-t2
+        title: "Helm Chart"
+        status: completed
+        files:
+          - helm/production-platform/Chart.yaml
+          - helm/production-platform/values.yaml
+          - helm/production-platform/templates/*
+      - id: m1-t3
+        title: "SonarQube Setup"
+        status: completed
+        files:
+          - sonarqube/docker-compose.yml
+          - sonarqube/sonar-project.properties
+      - id: m1-t4
+        title: "Jenkins Pipeline"
+        status: completed
+        files:
+          - Jenkinsfile
+      - id: m1-t5
+        title: "Webhook Automation"
+        status: pending
+        description: "Set up GitHub webhook and end-to-end push-to-deploy verification."
+
+  - id: m2
+    title: "Observability"
+    status: pending
+    description: "Prometheus, Grafana dashboards, Alertmanager, Loki + Promtail"
+    tasks:
+      - id: m2-t1
+        title: "Prometheus & Grafana Setup"
+        status: pending
+      - id: m2-t2
+        title: "App Instrumentation"
+        status: pending
+      - id: m2-t3
+        title: "Loki + Promtail Setup"
+        status: pending
+
+  - id: m3
+    title: "Cloud Infrastructure"
+    status: pending
+    description: "Terraform provisioning of AWS VPC, EKS, IAM"
+    tasks:
+      - id: m3-t1
+        title: "VPC and IAM Setup via Terraform"
+        status: pending
+      - id: m3-t2
+        title: "EKS Cluster Provisioning"
+        status: pending
+      - id: m3-t3
+        title: "Route 53 + ACM"
+        status: pending
+
+  - id: m4
+    title: "Production Hardening"
+    status: pending
+    description: "ArgoCD GitOps, RBAC, Network Policies, HPA, Velero backups"
+    tasks:
+      - id: m4-t1
+        title: "ArgoCD GitOps Implementation"
+        status: pending
+      - id: m4-t2
+        title: "RBAC & Network Policies"
+        status: pending
+      - id: m4-t3
+        title: "Autoscaling & Backups"
+        status: pending

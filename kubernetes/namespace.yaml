@@ -1,0 +1,11 @@
+# All project resources live in this namespace — keeps everything isolated
+# from other workloads in the cluster.
+#
+# Apply: kubectl apply -f kubernetes/namespace.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: devops-platform
+  labels:
+    app.kubernetes.io/managed-by: helm
+    project: production-devops-platform

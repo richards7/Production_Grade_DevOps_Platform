@@ -1,0 +1,64 @@
+# SonarQube Community Edition — runs as a standalone stack.
+#
+# ⚠️  One-time WSL prerequisite (SonarQube requires this kernel setting):
+#   sudo sysctl -w vm.max_map_count=262144
+#   To make it permanent: echo "vm.max_map_count=262144" | sudo tee -a /etc/sysctl.conf
+#
+# Start: docker compose -f sonarqube/docker-compose.yml up -d
+# Stop:  docker compose -f sonarqube/docker-compose.yml down
+#
+# SonarQube UI: http://localhost:9000
+#   Default credentials: admin / admin  (change on first login)
+#
+# Jenkins → Manage Jenkins → System → SonarQube servers:
+#   Name:             SonarQube
+#   Server URL:       http://host.docker.internal:9000
+#   Server auth token: (generate in SonarQube UI → My Account → Security → Generate Token)
+#
+# The jenkins agent reaches SonarQube at http://host.docker.internal:9000
+# because both run in Docker containers on the same WSL host.
+
+services:
+  sonarqube:
+    image: sonarqube:community
+    container_name: sonarqube
+    depends_on:
+      - sonar-db
+    ports:
+      - "9000:9000"
+    environment:
+      SONAR_JDBC_URL: jdbc:postgresql://sonar-db:5432/sonar
+      SONAR_JDBC_USERNAME: sonar
+      SONAR_JDBC_PASSWORD: sonar
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_logs:/opt/sonarqube/logs
+      - sonarqube_extensions:/opt/sonarqube/extensions
+    # SonarQube needs this or it will crash on startup in WSL
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+    networks:
+      - sonar-net
+
+  sonar-db:
+    image: postgres:16
+    container_name: sonar-db
+    environment:
+      POSTGRES_USER: sonar
+      POSTGRES_PASSWORD: sonar
+      POSTGRES_DB: sonar
+    volumes:
+      - sonar_db_data:/var/lib/postgresql/data
+    networks:
+      - sonar-net
+
+volumes:
+  sonarqube_data:
+  sonarqube_logs:
+  sonarqube_extensions:
+  sonar_db_data:
+
+networks:
+  sonar-net:
