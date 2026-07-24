@@ -59,7 +59,7 @@ pipeline {
 
         // ── SonarQube ─────────────────────────────────────────────────────────
         // Server name matches what's configured in Manage Jenkins → System
-        SONARQUBE_SERVER  = 'SonarQube'
+        SONARQUBE_SERVER  = 'sonar-server'
     }
 
     options {
