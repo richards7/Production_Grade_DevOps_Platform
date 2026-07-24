@@ -31,7 +31,7 @@ function App() {
 
   return (
     <div style={{ fontFamily: 'sans-serif', maxWidth: 500, margin: '40px auto' }}>
-      <h1>Students</h1>
+      <h1>Students - CI/CD Test!</h1>
       {error && <p style={{ color: 'red' }}>{error}</p>}
 
       <form onSubmit={handleSubmit} style={{ marginBottom: 20 }}>
